@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+
+<title>Vuela Alto con Hetero - Juego de la Cometa</title>
+<style>
+  :root{
+    --hetero-blue-dark:#0b3d66;
+    --hetero-blue:#0f5aa3;
+    --hetero-blue-light:#4fb8e8;
+    --sky-top:#bfe9ff;
+    --sky-bottom:#eaf9ff;
+    --coral:#ff6a45;
+    --coral-dark:#e8501f;
+    --white:#ffffff;
+    --ink:#0b2a3d;
+    --card:#ffffffee;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+  html,body{margin:0;height:100%;overflow:hidden;font-family:'Poppins',sans-serif;;background:var(--sky-bottom);}
+  #app{position:relative;width:100vw;height:100vh;}
+  canvas{position:absolute;top:0;left:0;display:block;touch-action:none;}
+
+  .screen{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      gap:16px;
+      padding:100px 24px 24px 24px;
+      text-align:center;
+      z-index:10;
+  }
+  .hidden{display:none !important;}
+
+  .brandbar{
+      position:absolute;
+      top:0;
+      left:0;
+      right:0;
+      height:70px;
+      background:#ffffff;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 25px;
+      z-index:999;
+      border-bottom:1px solid #ececec;
+      box-shadow:0 3px 12px rgba(0,0,0,.08);
+  }
+
+  .brandbar .logo-slot{
+
+      display:flex;
+
+      align-items:center;
+
+      justify-content:flex-start;
+
+      height:100%;
+
+  }
+  .brandbar .logo-slot img{
+      height:55px;
+      max-width:220px;
+      object-fit:contain;
+      display:block;
+  }
+
+  .brandbar .tagline{
+
+      margin-left:auto;
+
+      color:#0b3d66;
+
+      font-size:17px;
+
+      font-weight:700;
+
+      letter-spacing:.3px;
+
+  }
+
+
+  .brandbar{
+
+      z-index:999;
+  }
+  .card{
+    background:var(--card);
+    border-radius:22px;
+    padding:28px 26px;
+    max-width:420px;
+    width:100%;
+    box-shadow:0 18px 40px rgba(11,61,102,.25);
+    border:2px solid #ffffff90;
+  }
+  h1.title{
+    color:var(--hetero-blue-dark);
+    font-size:26px;
+    margin:0 0 4px;
+    font-weight:800;
+  }
+  .subtitle{color:var(--hetero-blue);font-weight:600;font-size:14px;margin-bottom:18px;}
+
+  label{display:block;text-align:left;font-size:13px;font-weight:700;color:var(--ink);margin:12px 0 6px;}
+  input[type=text]{
+    width:100%;padding:12px 14px;border-radius:12px;border:2px solid #cfe7f7;
+    font-size:15px;outline:none;transition:border .15s;
+  }
+  input[type=text]:focus{border-color:var(--hetero-blue-light);}
+
+  button.cta{
+    margin-top:20px;width:100%;padding:14px;border:none;border-radius:14px;
+    background:linear-gradient(135deg,var(--coral),var(--coral-dark));
+    color:#fff;font-size:17px;font-weight:800;cursor:pointer;
+    box-shadow:0 8px 18px rgba(232,80,31,.35);
+    transition:transform .1s;
+  }
+  button.cta:active{transform:scale(.97);}
+  button.secondary{
+    margin-top:10px;width:100%;padding:12px;border:2px solid var(--hetero-blue);
+    background:transparent;color:var(--hetero-blue);font-weight:700;border-radius:14px;
+    cursor:pointer;font-size:14px;
+  }
+
+  .hud{
+    position:absolute;top:100px;left:0;right:0;display:flex;justify-content:space-between;
+    padding:0 16px;z-index:15;pointer-events:none;
+  }
+  .pill{
+    background:#ffffffdd;border-radius:999px;padding:8px 16px;font-weight:800;
+    color:var(--hetero-blue-dark);font-size:14px;box-shadow:0 4px 10px rgba(0,0,0,.12);
+  }
+
+  .lives{display:flex;gap:4px;}
+  .life{width:14px;height:14px;border-radius:50%;background:var(--coral);}
+  .life.lost{background:#ffffff55;}
+
+  table.board{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px;}
+  table.board th{color:var(--hetero-blue);text-align:left;padding:6px 6px;border-bottom:2px solid #cfe7f7;font-size:11px;}
+  table.board td{padding:7px 6px;border-bottom:1px solid #eef6fb;color:var(--ink);text-align:left;}
+  table.board tr:first-child td{font-weight:800;color:var(--coral-dark);}
+  .board-wrap{max-height:220px;overflow-y:auto;margin-top:6px;border-radius:10px;}
+
+  .err{color:var(--coral-dark);font-size:12px;font-weight:700;min-height:16px;}
+  .smallnote{font-size:11px;color:#5a7c94;margin-top:4px;}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div class="brandbar">
+
+      <div class="logo-slot">
+          <img src="assets/logo-hetero.png" alt="Hetero">
+      </div>
+
+      <div class="tagline">
+          Vuela Alto con Hetero
+      </div>
+
+  </div>
+
+  <canvas id="game"></canvas>
+
+  <div class="hud hidden" id="hud">
+    <div class="pill">⏱ <span id="hudTime">60</span>s</div>
+    <div class="pill" style="display:flex;align-items:center;gap:8px;">
+      <span>⭐ <span id="hudScore">0</span></span>
+      <span class="lives" id="hudLives"></span>
+    </div>
+  </div>
+
+  <!-- PANTALLA 1: Registro -->
+  <div class="screen" id="screenStart">
+    <div class="card">
+      <h1 class="title">🪁 Vuela Alto con Hetero</h1>
+      <div class="subtitle">Atrapa nuestros 3 productos (+50 pts c/u). Si atrapas una nube en su lugar, no sumas puntos. ¡Esquiva a los pájaros y cometas rivales!</div>
+      <label for="inpName">Nombre y apellido</label>
+      <input type="text" id="inpName" placeholder="Ej: María Pérez" maxlength="60">
+      <label for="inpDrug">Nombre de la droguería</label>
+      <input type="text" id="inpDrug" placeholder="Ej: Droguería San Rafael" maxlength="80">
+      <div class="err" id="startErr"></div>
+      <button class="cta" id="btnStart">🚀 Empezar a jugar</button>
+      <button class="secondary" id="btnShowBoard">🏆 Ver tabla de resultados</button>
+      <div class="smallnote">Tienes 60 segundos y 3 vidas. Mueve el mouse o el dedo para dirigir la cometa y atrapar los productos.</div>
+    </div>
+  </div>
+
+  <!-- PANTALLA 2: Fin de partida -->
+  <div class="screen hidden" id="screenEnd">
+    <div class="card">
+      <h1 class="title" id="endTitle">🪁 ¡Buen vuelo!</h1>
+      <div class="subtitle">Tu puntaje quedó guardado en la tabla de resultados</div>
+      <div class="pill" style="display:inline-block;font-size:20px;">⭐ <span id="finalScore">0</span> puntos</div>
+      <div class="err" id="saveStatus" style="margin-top:10px;"></div>
+      <button class="cta" id="btnRetry">🔁 Jugar otra vez</button>
+      <button class="secondary" id="btnBoardFromEnd">🏆 Ver tabla de resultados</button>
+    </div>
+  </div>
+
+  <!-- PANTALLA 3: Tabla de resultados -->
+  <div class="screen hidden" id="screenBoard">
+    <div class="card" style="max-width:480px;">
+      <h1 class="title">🏆 Tabla de resultados</h1>
+      <div class="subtitle">Mejores puntajes de todas las droguerías</div>
+      <div class="board-wrap">
+        <table class="board" id="boardTable">
+          <thead><tr><th>#</th><th>Nombre</th><th>Droguería</th><th>Pts</th><th>Fecha</th></tr></thead>
+          <tbody id="boardBody"></tbody>
+        </table>
+      </div>
+      <div class="err" id="boardStatus"></div>
+      <button class="cta" id="btnBackToStart">← Volver</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* =========================================================
+   CONFIGURACIÓN — pega aquí la URL de tu Google Apps Script
+   una vez que lo despliegues (ver README-DESPLIEGUE.md)
+   ========================================================= */
+const CONFIG = {
+  REMOTE_URL: "https://script.google.com/macros/s/AKfycbx8XHxIcSNVTe-N5l0Da_a3d3zUgteQA1y4dqzecfwjcfMZJNKH37fZNfzi7gy4X-VF/exec"
+};
+
+/* ---------- Productos a atrapar ----------
+   Reemplaza los archivos product1.png, product2.png, product3.png
+   (en la misma carpeta que este index.html) por las imágenes reales
+   de tus 3 productos. Si un archivo no existe, el juego dibuja un
+   círculo de respaldo con el nombre corto, así nunca se rompe. */
+const PRODUCTS = [
+  { key: "product1", label: "P1", file: "assets/clopisev.png", color: "#0f5aa3" },
+  { key: "product2", label: "P2", file: "assets/zebelol.png", color: "#ff6a45" },
+  { key: "product3", label: "P3", file: "assets/tadet.png", color: "#2fae66" },
+];
+const CATCH_POINTS = 50;
+
+const productImages = PRODUCTS.map(p => {
+  const img = new Image();
+  img.loaded = false;
+  img.failed = false;
+  img.onload = () => { img.loaded = true; };
+  img.onerror = () => { img.failed = true; };
+  img.src = p.file;
+  return img;
+});
+
+/* ---------- Utilidades de almacenamiento ---------- */
+const LOCAL_KEY = "hetero_cometa_scores_v1";
+
+function loadLocalScores(){
+  try{ return JSON.parse(localStorage.getItem(LOCAL_KEY) || "[]"); }
+  catch(e){ return []; }
+}
+function saveLocalScore(entry){
+  const list = loadLocalScores();
+  list.push(entry);
+  localStorage.setItem(LOCAL_KEY, JSON.stringify(list));
+}
+
+async function saveScoreRemote(entry){
+  if(!CONFIG.REMOTE_URL) return {ok:false, reason:"no-remote"};
+  try{
+    await fetch(CONFIG.REMOTE_URL, {
+      method:"POST",
+      mode:"no-cors", // Apps Script Web Apps no siempre permiten CORS con lectura de respuesta
+      headers:{"Content-Type":"text/plain"},
+      body: JSON.stringify(entry)
+    });
+    return {ok:true};
+  }catch(e){
+    return {ok:false, reason:e.message};
+  }
+}
+
+async function fetchRemoteScores(){
+  if(!CONFIG.REMOTE_URL) return null;
+  try{
+    const res = await fetch(CONFIG.REMOTE_URL + "?action=list");
+    const data = await res.json();
+    return data;
+  }catch(e){
+    return null;
+  }
+}
+
+/* ---------- Elementos DOM ---------- */
+const screenStart = document.getElementById('screenStart');
+const screenEnd = document.getElementById('screenEnd');
+const screenBoard = document.getElementById('screenBoard');
+const hud = document.getElementById('hud');
+const inpName = document.getElementById('inpName');
+const inpDrug = document.getElementById('inpDrug');
+const startErr = document.getElementById('startErr');
+
+document.getElementById('btnStart').addEventListener('click', () => {
+  const name = inpName.value.trim();
+  const drug = inpDrug.value.trim();
+  if(!name || !drug){
+    startErr.textContent = "Por favor completa tu nombre y la droguería.";
+    return;
+  }
+  startErr.textContent = "";
+  screenStart.classList.add('hidden');
+  startGame(name, drug);
+});
+
+document.getElementById('btnShowBoard').addEventListener('click', () => showBoard());
+document.getElementById('btnBoardFromEnd').addEventListener('click', () => showBoard());
+document.getElementById('btnBackToStart').addEventListener('click', () => {
+  screenBoard.classList.add('hidden');
+  screenStart.classList.remove('hidden');
+});
+document.getElementById('btnRetry').addEventListener('click', () => {
+  screenEnd.classList.add('hidden');
+  screenStart.classList.remove('hidden');
+});
+
+async function showBoard(){
+  screenStart.classList.add('hidden');
+  screenEnd.classList.add('hidden');
+  screenBoard.classList.remove('hidden');
+  const body = document.getElementById('boardBody');
+  const status = document.getElementById('boardStatus');
+  body.innerHTML = "";
+  status.textContent = "Cargando...";
+
+  let list = [];
+  const remote = await fetchRemoteScores();
+  if(remote && Array.isArray(remote)){
+    list = remote;
+    status.textContent = "";
+  } else {
+    list = loadLocalScores();
+    status.textContent = CONFIG.REMOTE_URL ? "No se pudo leer el servidor, mostrando resultados locales." : "Modo local (configura el backend para compartir resultados entre todos).";
+  }
+
+  list.sort((a,b) => b.score - a.score);
+  list.slice(0,20).forEach((row, i) => {
+    const tr = document.createElement('tr');
+    const date = row.date ? new Date(row.date).toLocaleDateString('es-CO') : '-';
+    tr.innerHTML = `<td>${i+1}</td><td>${escapeHtml(row.name)}</td><td>${escapeHtml(row.drugstore)}</td><td>${row.score}</td><td>${date}</td>`;
+    body.appendChild(tr);
+  });
+  if(list.length === 0){
+    body.innerHTML = `<tr><td colspan="5">Aún no hay resultados. ¡Sé el primero!</td></tr>`;
+  }
+}
+
+function escapeHtml(s){
+  return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* ---------- Juego (canvas) ---------- */
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+let W, H, DPR;
+function resize(){
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  W = window.innerWidth; H = window.innerHeight;
+  canvas.width = W * DPR; canvas.height = H * DPR;
+  canvas.style.width = W+'px'; canvas.style.height = H+'px';
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+}
+window.addEventListener('resize', resize);
+resize();
+
+let raf = null;
+let running = false;
+let playerName = "", playerDrug = "";
+
+const kite = { x:0, y:0, tx:0, ty:0, angle:0, tail:[] };
+let obstacles = [];
+let bonuses = [];
+let clouds = [];
+let popups = [];
+let score = 0, lives = 3, timeLeft = 60;
+let lastSpawn = 0, lastBonusSpawn = 0, tPrev = 0, elapsed = 0;
+let invuln = 0;
+
+function initClouds(){
+  clouds = [];
+  for(let i=0;i<6;i++){
+    clouds.push({x:Math.random()*W, y:80+Math.random()*(H*0.4), s:0.6+Math.random()*0.8, v:8+Math.random()*10});
+  }
+}
+
+function startGame(name, drug){
+  playerName = name; playerDrug = drug;
+  score = 0; lives = 3; timeLeft = 60; obstacles = []; bonuses = []; popups = [];
+  kite.x = W/2; kite.y = H/2; kite.tx = kite.x; kite.ty = kite.y; kite.tail = [];
+  invuln = 0;
+  initClouds();
+  hud.classList.remove('hidden');
+  updateHud();
+  running = true;
+  tPrev = performance.now();
+  lastSpawn = 0; lastBonusSpawn = 0; elapsed = 0;
+  cancelAnimationFrame(raf);
+  raf = requestAnimationFrame(loop);
+}
+
+function updateHud(){
+  document.getElementById('hudTime').textContent = Math.max(0, Math.ceil(timeLeft));
+  document.getElementById('hudScore').textContent = score;
+  const livesWrap = document.getElementById('hudLives');
+  livesWrap.innerHTML = "";
+  for(let i=0;i<3;i++){
+    const d = document.createElement('div');
+    d.className = 'life' + (i < lives ? '' : ' lost');
+    livesWrap.appendChild(d);
+  }
+}
+
+/* Entrada: mouse y touch mueven el objetivo de la cometa */
+function setTarget(clientX, clientY){
+  kite.tx = clientX;
+  kite.ty = clientY;
+}
+canvas.addEventListener('mousemove', e => { if(running) setTarget(e.clientX, e.clientY); });
+canvas.addEventListener('touchmove', e => {
+  if(running && e.touches[0]){ setTarget(e.touches[0].clientX, e.touches[0].clientY); e.preventDefault(); }
+}, {passive:false});
+canvas.addEventListener('touchstart', e => {
+  if(running && e.touches[0]){ setTarget(e.touches[0].clientX, e.touches[0].clientY); }
+}, {passive:false});
+
+function spawnObstacle(){
+  const fromLeft = Math.random() < 0.5;
+  const y = 90 + Math.random() * (H - 220);
+  obstacles.push({
+    x: fromLeft ? -40 : W+40,
+    y, r: 20 + Math.random()*12,
+    vx: (fromLeft ? 1 : -1) * (60 + Math.random()*70),
+    vy: (Math.random()-0.5) * 30,
+    type: Math.random() < 0.5 ? 'bird' : 'rival'
+  });
+}
+function spawnBonus(){
+  // 65% de probabilidad de que vuele un producto, 35% una nube señuelo
+  const isProduct = Math.random() < 0.65;
+  const productIdx = Math.floor(Math.random() * PRODUCTS.length);
+  bonuses.push({
+    x: Math.random()*(W-80)+40,
+    y: H + 30,
+    vy: -(50 + Math.random()*40),
+    vx: (Math.random()-0.5)*20,
+    r: isProduct ? 24 : 22,
+    kind: isProduct ? 'product' : 'cloud',
+    productIdx
+  });
+}
+
+function loop(now){
+  if(!running) return;
+  const dt = Math.min(0.05, (now - tPrev)/1000);
+  tPrev = now; elapsed += dt;
+  timeLeft -= dt;
+
+  // spawn pacing
+  lastSpawn += dt; lastBonusSpawn += dt;
+  const spawnRate = Math.max(0.55, 1.6 - elapsed*0.02);
+  if(lastSpawn > spawnRate){ lastSpawn = 0; spawnObstacle(); }
+  if(lastBonusSpawn > 1.1){ lastBonusSpawn = 0; spawnBonus(); }
+
+  // kite ease toward target
+  kite.x += (kite.tx - kite.x) * Math.min(1, dt*8);
+  kite.y += (kite.ty - kite.y) * Math.min(1, dt*8);
+  kite.angle = Math.atan2(kite.ty - kite.y, kite.tx - kite.x);
+  kite.tail.unshift({x:kite.x, y:kite.y});
+  if(kite.tail.length > 14) kite.tail.pop();
+
+  if(invuln > 0) invuln -= dt;
+
+  // update obstacles
+  obstacles.forEach(o => { o.x += o.vx*dt; o.y += o.vy*dt; });
+  obstacles = obstacles.filter(o => o.x > -80 && o.x < W+80);
+
+  // update bonuses
+  bonuses.forEach(b => { b.x += b.vx*dt; b.y += b.vy*dt; });
+  bonuses = bonuses.filter(b => b.y > -60);
+
+  // update clouds
+  clouds.forEach(c => { c.x += c.v*dt; if(c.x > W+100) c.x = -100; });
+
+  // collisions: obstacles
+  if(invuln <= 0){
+    for(const o of obstacles){
+      const dx = o.x-kite.x, dy=o.y-kite.y;
+      if(Math.hypot(dx,dy) < o.r+18){
+        lives -= 1; invuln = 1.4;
+        obstacles = obstacles.filter(x => x !== o);
+        break;
+      }
+    }
+  }
+  // collisions: bonuses (productos y nubes señuelo)
+  bonuses = bonuses.filter(b => {
+    const dx = b.x-kite.x, dy=b.y-kite.y;
+    if(Math.hypot(dx,dy) < b.r+18){
+      if(b.kind === 'product'){
+        score += CATCH_POINTS;
+        popups.push({x:b.x, y:b.y, text:'+'+CATCH_POINTS, life:0.8, color:'#2fae66'});
+      } else {
+        popups.push({x:b.x, y:b.y, text:'0 pts', life:0.8, color:'#8aa9bb'});
+      }
+      return false;
+    }
+    return true;
+  });
+
+  // update popups (texto flotante de puntos)
+  popups.forEach(p => { p.y -= 40*dt; p.life -= dt; });
+  popups = popups.filter(p => p.life > 0);
+
+  updateHud();
+
+  if(lives <= 0 || timeLeft <= 0){
+    endGame();
+    return;
+  }
+
+  render();
+  raf = requestAnimationFrame(loop);
+}
+
+function drawSky(){
+  const g = ctx.createLinearGradient(0,0,0,H);
+  g.addColorStop(0, '#bfe9ff');
+  g.addColorStop(1, '#eaf9ff');
+  ctx.fillStyle = g;
+  ctx.fillRect(0,0,W,H);
+  ctx.fillStyle = '#ffffffcc';
+  clouds.forEach(c => {
+    ctx.beginPath();
+    ctx.ellipse(c.x, c.y, 40*c.s, 18*c.s, 0, 0, Math.PI*2);
+    ctx.ellipse(c.x+25*c.s, c.y+6*c.s, 28*c.s, 14*c.s, 0, 0, Math.PI*2);
+    ctx.ellipse(c.x-25*c.s, c.y+6*c.s, 28*c.s, 14*c.s, 0, 0, Math.PI*2);
+    ctx.fill();
+  });
+}
+
+function drawKite(){
+  // cola
+  ctx.lineWidth = 3;
+  for(let i=0;i<kite.tail.length-1;i++){
+    const p0 = kite.tail[i], p1 = kite.tail[i+1];
+    ctx.strokeStyle = i%2===0 ? '#ff6a45' : '#0f5aa3';
+    ctx.beginPath(); ctx.moveTo(p0.x,p0.y); ctx.lineTo(p1.x,p1.y); ctx.stroke();
+  }
+  // cuerpo (diamante)
+  ctx.save();
+  ctx.translate(kite.x, kite.y);
+  const blink = invuln > 0 && Math.floor(elapsed*10)%2===0;
+  ctx.globalAlpha = blink ? 0.4 : 1;
+  ctx.beginPath();
+  ctx.moveTo(0,-26); ctx.lineTo(20,0); ctx.lineTo(0,26); ctx.lineTo(-20,0); ctx.closePath();
+  const grad = ctx.createLinearGradient(-20,-26,20,26);
+  grad.addColorStop(0,'#0f5aa3'); grad.addColorStop(1,'#4fb8e8');
+  ctx.fillStyle = grad;
+  ctx.fill();
+  ctx.lineWidth = 2; ctx.strokeStyle = '#0b3d66'; ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0,-26); ctx.lineTo(0,26); ctx.moveTo(-20,0); ctx.lineTo(20,0);
+  ctx.strokeStyle = '#ffffffaa'; ctx.lineWidth = 1.5; ctx.stroke();
+  ctx.restore();
+}
+
+function drawObstacles(){
+  obstacles.forEach(o => {
+    ctx.save();
+    ctx.translate(o.x, o.y);
+    if(o.type === 'bird'){
+      ctx.strokeStyle = '#0b3d66'; ctx.lineWidth = 4; ctx.lineCap='round';
+      const w = 8 + Math.sin(elapsed*10 + o.x)*4;
+      ctx.beginPath();
+      ctx.moveTo(-14,0); ctx.quadraticCurveTo(-7,-w-6,0,0);
+      ctx.quadraticCurveTo(7,-w-6,14,0);
+      ctx.stroke();
+    } else {
+      ctx.beginPath();
+      ctx.moveTo(0,-o.r); ctx.lineTo(o.r*0.7,0); ctx.lineTo(0,o.r); ctx.lineTo(-o.r*0.7,0); ctx.closePath();
+      ctx.fillStyle = '#e8501f';
+      ctx.fill();
+      ctx.strokeStyle = '#7a2405'; ctx.lineWidth=2; ctx.stroke();
+    }
+    ctx.restore();
+  });
+}
+
+function drawBonuses(){
+  bonuses.forEach(b => {
+    ctx.save();
+    ctx.translate(b.x, b.y);
+    if(b.kind === 'cloud'){
+      // nube señuelo: no suma puntos
+      ctx.fillStyle = '#ffffffdd';
+      ctx.strokeStyle = '#c9e3f2';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, b.r, b.r*0.62, 0, 0, Math.PI*2);
+      ctx.ellipse(b.r*0.55, b.r*0.15, b.r*0.6, b.r*0.42, 0, 0, Math.PI*2);
+      ctx.ellipse(-b.r*0.55, b.r*0.15, b.r*0.6, b.r*0.42, 0, 0, Math.PI*2);
+      ctx.fill(); ctx.stroke();
+    } else {
+      const prod = PRODUCTS[b.productIdx];
+      const img = productImages[b.productIdx];
+      if(img.loaded && !img.failed){
+        const w = 80;
+        const h = 50;
+
+        ctx.drawImage(
+            img,
+            -w/2,
+            -h/2,
+            w,
+            h
+        );
+      } else {
+        // respaldo: círculo de color con etiqueta corta del producto
+        ctx.beginPath();
+        ctx.arc(0, 0, b.r, 0, Math.PI*2);
+        ctx.fillStyle = prod.color;
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2.5; ctx.stroke();
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 13px Segoe UI, sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText(prod.label, 0, 1);
+      }
+    }
+    ctx.restore();
+  });
+}
+
+function drawPopups(){
+  popups.forEach(p => {
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, p.life / 0.8);
+    ctx.fillStyle = p.color;
+    ctx.font = 'bold 16px Segoe UI, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(p.text, p.x, p.y);
+    ctx.restore();
+  });
+}
+function roundRect(x,y,w,h,r, leftHalfOnly){
+  ctx.beginPath();
+  if(leftHalfOnly){
+    ctx.moveTo(x+w, y);
+    ctx.arcTo(x, y, x, y+r, r);
+    ctx.arcTo(x, y+h, x+r, y+h, r);
+    ctx.lineTo(x+w, y+h);
+    ctx.closePath();
+  } else {
+    ctx.moveTo(x+r, y);
+    ctx.arcTo(x+w, y, x+w, y+h, r);
+    ctx.arcTo(x+w, y+h, x, y+h, r);
+    ctx.arcTo(x, y+h, x, y, r);
+    ctx.arcTo(x, y, x+w, y, r);
+    ctx.closePath();
+  }
+}
+
+function render(){
+  drawSky();
+  drawBonuses();
+  drawObstacles();
+  drawKite();
+  drawPopups();
+}
+
+async function endGame(){
+  running = false;
+  hud.classList.add('hidden');
+  cancelAnimationFrame(raf);
+
+  const entry = {
+    name: playerName,
+    drugstore: playerDrug,
+    score: score,
+    date: new Date().toISOString()
+  };
+  saveLocalScore(entry);
+  const status = document.getElementById('saveStatus');
+  status.textContent = "Guardando resultado...";
+
+  const result = await saveScoreRemote(entry);
+  if(CONFIG.REMOTE_URL){
+    status.textContent = "✅ Resultado guardado";
+  } else {
+    status.textContent = "Resultado guardado en este dispositivo (configura el backend para compartirlo con todas las droguerías).";
+  }
+
+  document.getElementById('finalScore').textContent = score;
+  document.getElementById('endTitle').textContent = lives <= 0 ? "🪁 ¡La cometa se enredó!" : "🪁 ¡Tiempo cumplido!";
+  screenEnd.classList.remove('hidden');
+}
+</script>
+</body>
+</html>
