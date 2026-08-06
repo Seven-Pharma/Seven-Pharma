@@ -435,8 +435,8 @@ async function showBoard(){
     const tr = document.createElement('tr');
 
     const date = row.date
-      ? new Date(row.date).toLocaleDateString('es-CO')
-      : '-';
+      ? row.date.split(" ")[0]
+      : "-";
       
     const posicion =
       i === 0 ? '<span class="rank medal">🥇</span>' :
