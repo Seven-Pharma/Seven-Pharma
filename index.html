@@ -409,6 +409,21 @@ document.getElementById('btnRetry').addEventListener('click', () => {
   screenStart.classList.remove('hidden');
 });
 
+function formatDate(fecha){
+
+    if(!fecha) return "-";
+
+    const partes = fecha.split(" ")[0].split("/");
+
+    if(partes.length !== 3) return fecha;
+
+    const dia = partes[0].padStart(2,"0");
+    const mes = partes[1].padStart(2,"0");
+    const anio = partes[2];
+
+    return `${dia}/${mes}/${anio}`;
+}
+
 async function showBoard(){
   screenStart.classList.add('hidden');
   screenEnd.classList.add('hidden');
@@ -434,10 +449,8 @@ async function showBoard(){
 
     const tr = document.createElement('tr');
 
-    const date = row.date
-      ? row.date.split(" ")[0]
-      : "-";
-      
+    const date = formatDate(row.date);
+
     const posicion =
       i === 0 ? '<span class="rank medal">🥇</span>' :
       i === 1 ? '<span class="rank medal">🥈</span>' :
