@@ -6,8 +6,22 @@
   var CFG = window.CF_CONFIG || {};
   var CLICS = 12, POR_OPORTUNIDAD = 4, CASILLAS = 24;
   var ELEMENTOS = ["Tadet", "Neubalin", "Valatril", "Logo Hetero"];
-  var IMG = { Tadet: "assets/img/tadet.jpg", Neubalin: "assets/img/neubalin.jpg", Valatril: "assets/img/valatril.jpg" };
-  var LOGO = "assets/img/hetero.png";
+  // Imágenes: WebP y, si el navegador no lo muestra, JPG/PNG de respaldo.
+  var IMG = { Tadet: "assets/img/tadet.webp", Neubalin: "assets/img/neubalin.webp", Valatril: "assets/img/valatril.webp" };
+  var IMG_RESPALDO = { Tadet: "assets/img/tadet.jpg", Neubalin: "assets/img/neubalin.jpg", Valatril: "assets/img/valatril.jpg" };
+  var IMG_TAM = { Tadet: [276, 90], Neubalin: [267, 108], Valatril: [267, 86] };
+  var LOGO = "assets/img/hetero.webp", LOGO_RESPALDO = "assets/img/hetero.png";
+  function imgLogo(alt) {
+    return '<img alt="' + alt + '" src="' + LOGO + '" width="192" height="159" data-respaldo="' + LOGO_RESPALDO + '">';
+  }
+  // Si un logo WebP no carga, se cambia una vez por su PNG de respaldo.
+  document.addEventListener("error", function (ev) {
+    var im = ev.target;
+    if (im && im.tagName === "IMG" && im.dataset.respaldo && !im.dataset.usado) {
+      im.dataset.usado = "1"; im.src = im.dataset.respaldo;
+    }
+  }, true);
+  function icono(id) { return '<svg aria-hidden="true" focusable="false"><use href="#' + id + '"/></svg>'; }
   var LETRAS = "A-Za-zÁÉÍÓÚÜÑáéíóúüñ";
   var RE_NOMBRE = new RegExp("^[" + LETRAS + "]+([ '-][" + LETRAS + "]+)*$");
   // Droguería: campo abierto; sin caracteres de control, con alguna letra o
@@ -44,6 +58,7 @@
   function esHttps(u) { return /^https:\/\/[^\s"'<>]+$/i.test(u || ""); }
   function go(n) {
     ["s0", "s1", "s2", "s3"].forEach(function (s, i) { $(s).classList.toggle("hide", i !== n); });
+    document.body.classList.toggle("inicio", n === 0);
     window.scrollTo(0, 0);
   }
   function mensaje(cont, tipo, texto, reintentar) {
@@ -55,7 +70,7 @@
     cont.appendChild(p);
     if (reintentar) {
       var b = document.createElement("button");
-      b.type = "button"; b.className = "btn sec H"; b.textContent = "Reintentar";
+      b.type = "button"; b.className = "btn sec"; b.textContent = "Reintentar";
       b.onclick = reintentar;
       cont.appendChild(b);
     }
@@ -109,7 +124,7 @@
   var campos = ["n", "d", "t", "rep", "ok"];
   function chk() {
     $("go").disabled = ocupado || !($("n").value.trim() && $("d").value.trim() && $("t").value.trim() && $("rep").value && $("ok").checked);
-    $("er").style.display = $("ok").checked ? "none" : "block";
+    $("er").style.display = $("ok").checked ? "none" : "";
   }
   campos.forEach(function (i) { $(i).addEventListener("input", chk); $(i).addEventListener("change", chk); });
 
@@ -143,6 +158,7 @@
     if (!solicitud) solicitud = uuid();
     ocupado = true; chk();
     $("go").textContent = "Guardando…";
+    $("go").classList.add("cargando");
     mensaje($("regmsg"), "i", "");
     rpc("cf_iniciar", {
       p_nombre: datos.nombre, p_drogueria: datos.drogueria, p_telefono: datos.telefono,
@@ -152,6 +168,7 @@
       token = r.token;
       iniciarTablero(datos);
       go(2);
+      $("b").children[0].focus({ preventScroll: true }); // accesibilidad: el teclado sigue en el tablero
     }).catch(function (e) {
       var c = (e && e.codigo) || "servidor";
       if (c === "celular" || c === "nombre" || c === "drogueria") {
@@ -162,6 +179,7 @@
     }).then(function () {
       ocupado = false;
       $("go").textContent = "Empezar a jugar";
+      $("go").classList.remove("cargando");
       chk();
     });
   }
@@ -198,7 +216,8 @@
   // ---------- juego ----------
   function iniciarTablero(datos) {
     abiertas = {}; clics = 0; terminado = false; ocupado = false;
-    $("who").textContent = datos.nombre + " · " + datos.drogueria;
+    $("who-n").textContent = datos.nombre;
+    $("who-d").textContent = datos.drogueria;
     var b = $("b");
     b.innerHTML = "";
     for (var i = 0; i < CASILLAS; i++) {
@@ -207,7 +226,7 @@
       e.className = "cell";
       e.dataset.pos = i;
       e.setAttribute("aria-label", "Casilla " + (i + 1) + ", fila " + (Math.floor(i / 4) + 1) + ", columna " + (i % 4 + 1) + ", cerrada");
-      e.innerHTML = '<img alt="" src="' + LOGO + '">';
+      e.innerHTML = imgLogo("");
       e.onclick = (function (pos) { return function () { clic(pos); }; })(i);
       b.appendChild(e);
     }
@@ -224,28 +243,38 @@
     ELEMENTOS.forEach(function (x) { cuenta[x] = 0; });
     Object.keys(abiertas).forEach(function (k) { if (cuenta[abiertas[k]] !== undefined) cuenta[abiertas[k]]++; });
     $("cnt").innerHTML = ELEMENTOS.map(function (x) {
-      return "<div>" + (x === "Logo Hetero" ? "Hetero" : x) + "<b>" + cuenta[x] + " / 3</b></div>";
+      return '<div' + (cuenta[x] === 2 ? ' class="casi"' : "") + ">" + (x === "Logo Hetero" ? "Hetero" : x) + "<b>" + cuenta[x] + " / 3</b></div>";
     }).join("");
   }
 
   function pintar(pos, elem, atenuar) {
     var e = $("b").children[pos];
     var t = elem === "vacio" ? "s" : elem === "Logo Hetero" ? "l" : "p";
-    e.className = "cell open " + t + (atenuar ? " dim" : "");
+    // Lo que destapó la persona (producto o logo) lleva borde verde y ✓; lo que se
+    // muestra al final (atenuado) no, porque la ✓ significa «lo encontraste».
+    var hallado = t !== "s" && !atenuar;
+    e.className = "cell open " + t + (atenuar ? " dim" : "") + (hallado ? " hallado" : "");
     e.disabled = true;
     if (t === "p") {
       e.innerHTML = "";
       var img = document.createElement("img");
-      img.className = "pi"; img.alt = elem; img.src = IMG[elem];
-      img.onerror = function () { e.textContent = elem; };
+      img.className = "pi"; img.alt = elem; img.width = IMG_TAM[elem][0]; img.height = IMG_TAM[elem][1];
+      img.onerror = function () {
+        if (img.src.indexOf(".webp") > -1) img.src = IMG_RESPALDO[elem];
+        else e.textContent = elem; // respaldo final: el nombre en texto
+      };
+      img.src = IMG[elem];
       e.appendChild(img);
+      if (hallado) e.insertAdjacentHTML("beforeend", marca());
     } else if (t === "s") {
       e.textContent = "😢";
     } else {
-      e.innerHTML = '<img alt="Logo Hetero" src="' + LOGO + '">';
+      e.innerHTML = imgLogo("Logo Hetero") + (hallado ? marca() : "");
     }
     e.setAttribute("aria-label", "Casilla " + (pos + 1) + ": " + (elem === "vacio" ? "vacía" : elem));
   }
+
+  function marca() { return '<span class="marca">' + icono("i-check") + "</span>"; }
 
   function clic(pos) {
     if (ocupado || terminado || !token || abiertas[pos] !== undefined) return;
@@ -257,6 +286,15 @@
     rpc("cf_clic", { p_token: token, p_pos: pos }).then(function (j) {
       cel.classList.remove("load");
       aplicar(j);
+      // Accesibilidad: la casilla abierta queda desactivada; el foco del teclado
+      // pasa a la siguiente casilla tapada en lugar de perderse.
+      if (!terminado && (document.activeElement === document.body || document.activeElement === cel)) {
+        var celdas = $("b").children;
+        for (var k = 1; k < CASILLAS; k++) {
+          var sig = celdas[(pos + k) % CASILLAS];
+          if (!sig.disabled) { sig.focus({ preventScroll: true }); break; }
+        }
+      }
     }).catch(function (e) {
       cel.classList.remove("load");
       var c = (e && e.codigo) || "servidor";
@@ -297,14 +335,54 @@
   // ---------- resultado (solo se muestra lo que el servidor ya guardó) ----------
   function resultado(gano, prod) {
     var bu = $("bu");
-    bu.textContent = gano ? "🏆" : "Uy...";
+    if (gano) bu.innerHTML = icono("i-trofeo"); else bu.textContent = "Uy...";
     bu.classList.toggle("trofeo", !!gano);
+    $("s3").classList.toggle("gana", !!gano);
+    $("s3").classList.toggle("pierde", !gano);
     $("rt").textContent = gano ? "¡BIEN HECHO ACERTASTE!" : "Casi lo logras";
     $("rt").className = "H " + (gano ? "win-t" : "lose-t");
     $("rs").textContent = gano
       ? (prod === "Logo Hetero" ? "Encontraste el logo Hetero 3 veces." : "Encontraste " + prod + " 3 veces.") + " Un asesor de Hetero te contactará."
       : "Se acabaron tus 12 clics. ¡Gracias por participar!";
     go(3);
+    if (gano) confeti(); else lluvia();
+  }
+
+  // Confeti con los colores de las marcas (Hetero, Tadet, Neubalin, Valatril).
+  // Solo decorativo (dura unos 4 segundos y no recibe toques).
+  // Al perder: caen algunas caritas 😢 (también decorativo).
+  function lluvia() {
+    var capa = document.createElement("div");
+    capa.className = "confeti"; capa.setAttribute("aria-hidden", "true");
+    for (var i = 0; i < 12; i++) {
+      var p = document.createElement("i");
+      p.className = "emoji"; p.textContent = "😢";
+      p.style.left = (Math.random() * 92) + "%";
+      p.style.animationDelay = (0.3 + Math.random() * 1.6) + "s";
+      p.style.animationDuration = (2.6 + Math.random() * 1.4) + "s";
+      p.style.setProperty("--giro", (Math.random() * 60 - 30) + "deg");
+      p.style.setProperty("--deriva", (Math.random() * 40 - 20) + "px");
+      capa.appendChild(p);
+    }
+    document.body.appendChild(capa);
+    setTimeout(function () { if (capa.parentNode) capa.parentNode.removeChild(capa); }, 4500);
+  }
+
+  function confeti() {
+    var capa = document.createElement("div"), colores = ["c1", "c2", "c3", "c4", "c5"];
+    capa.className = "confeti"; capa.setAttribute("aria-hidden", "true");
+    for (var i = 0; i < 110; i++) {
+      var p = document.createElement("i");
+      p.className = colores[i % colores.length] + (i % 3 ? "" : " cinta");
+      p.style.left = (Math.random() * 100) + "%";
+      p.style.animationDelay = (Math.random() * (i < 70 ? 0.6 : 1.8)) + "s";
+      p.style.animationDuration = (2.4 + Math.random() * 1.8) + "s";
+      p.style.setProperty("--giro", (Math.random() * 720 - 360) + "deg");
+      p.style.setProperty("--deriva", (Math.random() * 120 - 60) + "px");
+      capa.appendChild(p);
+    }
+    document.body.appendChild(capa);
+    setTimeout(function () { if (capa.parentNode) capa.parentNode.removeChild(capa); }, 5200);
   }
 
   chk();
