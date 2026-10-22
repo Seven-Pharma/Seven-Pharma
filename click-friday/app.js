@@ -169,6 +169,7 @@
       p_representante: $("rep").value, p_acepta: $("ok").checked, p_solicitud: solicitud,
       p_segundos_formulario: inicioFormulario === null ? null : Math.round((performance.now() - inicioFormulario) / 1000)
     }).then(function (r) {
+      if (r && r.error) throw { codigo: r.error }; // p. ej. «ya_participo»: el servidor guardó el intento repetido
       if (!r || !r.token) throw { codigo: "servidor" };
       token = r.token;
       iniciarTablero(datos);
