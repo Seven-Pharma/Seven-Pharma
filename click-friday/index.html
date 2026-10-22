@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://*.supabase.co; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Click Friday · Hetero</title>
+<meta name="description" content="¡Solo para droguistas! Encuentra tu producto ganador.">
+<meta name="theme-color" content="#011836">
+<meta name="color-scheme" content="light">
+<!-- Open Graph (WhatsApp). Dirección pública: https://seven-pharma.github.io/Seven-Pharma/click-friday/ -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_CO">
+<meta property="og:site_name" content="Hetero">
+<meta property="og:title" content="Click Friday · Hetero">
+<meta property="og:description" content="¡Solo para droguistas! Encuentra tu producto ganador.">
+<meta property="og:url" content="https://seven-pharma.github.io/Seven-Pharma/click-friday/">
+<meta property="og:image" content="https://seven-pharma.github.io/Seven-Pharma/click-friday/assets/img/og-click-friday.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Logo Hetero · Click Friday">
+<link rel="icon" type="image/png" sizes="48x48" href="assets/img/favicon-48.png">
+<link rel="preload" href="assets/fonts/anton.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:"Anton";src:url(assets/fonts/anton.woff2) format("woff2");font-weight:400;font-style:normal;font-display:swap}
+/* ---------- Paleta (ver docs/DISENO.md). Cambiar aquí para ajustar colores. ---------- */
+:root{
+  /* Template 22-oct (Template/Template.png): fondo azul marino, rojo Hetero, tarjetas blancas con texto azul oscuro */
+  --bg:#011836;          /* fondo general: azul marino del template */
+  --surface:#FFFFFF;     /* blanco: encabezado, casillas y logos de producto */
+  --surface-2:#EAEEF7;   /* superficies secundarias: texto legal, mensajes informativos */
+  --line:#DCE1EE;        /* líneas sobre tarjeta blanca */
+  --line-strong:#8A93B5;
+  --ink:#1A2A6C;         /* texto principal sobre tarjeta blanca (azul oscuro) */
+  --ink-2:#4B567F;       /* texto secundario sobre tarjeta blanca */
+  --brand:#E8072A;       /* rojo del template (botón y números) */
+  --brand-hi:#F50725;    /* parte alta del degradado del botón */
+  --brand-press:#C70624; /* rojo al presionar */
+  --brand-ink:#C8001F;   /* rojo para texto pequeño sobre blanco */
+  --on-brand:#FFFFFF;
+  --charcoal:#2C3038;    /* interior del anaquel de la ilustración */
+  --on-charcoal:#F5F3EF;
+  --on-charcoal-2:#C4C1BB;
+  --hud-ink:#1A2A6C;     /* texto del encabezado del juego (tarjeta blanca) */
+  --hud-ink-2:#4B567F;
+  --gold:#F2B705;        /* detalle: victoria */
+  --on-gold:#202329;
+  --gold-bg:#FFF1C2;
+  --ok-ink:#17663A;
+  --ok-bg:#E4F2E9;
+  --ok-line:#2C8A52;
+  --err-ink:#B3121A;
+  --err-bg:#FDE8E9;
+  --warn-ink:#6B4A00;
+  --warn-bg:#FFF4D6;
+  --warn-line:#E0A200;
+  --focus:#2B6BFF;
+  --disabled-bg:#D5DAE8;
+  --on-disabled:#4D5678;
+  --radius:18px;
+  --radius-sm:10px;
+  --shadow:0 10px 28px rgba(0,0,0,.35);
+  --placeholder:#6B7599;
+  --err-field:#FFF0F1;
+  --charcoal-line:#B8C0DA;
+  --charcoal-past:#E4E8F3;
+  --on-charcoal-past:#4D5678;
+  --charcoal-2:#EAEEF7;
+  --gold-ring:#F2D675;
+  --res-bg:#0A2350;      /* tarjeta de resultado: azul marino un poco más claro que el fondo */
+  --res-win:#4A4021;     /* brillo dorado al ganar */
+  --res-lose:#4F1430;    /* brillo rojo oscuro al perder */
+  --res-ring:#6B5A22;
+  --il-cuello:#E0AC69;
+  --il-piel:#F1C27D;
+  --il-pelo:#2B1B12;
+  --il-trazo:#222222;
+  --il-boca:#7A3B1E;
+  --il-marco:#132D95;          /* marco azul de la droguería (medido en el template) */
+  --regla-bg:#E8072A;          /* números de las reglas: círculo rojo con cifra blanca */
+  --regla-ink:#FFFFFF;
+  /* Zonas */
+  --hd-bg:#FFFFFF;
+  --hd-line:var(--brand); /* franja roja bajo el logo */
+  --on-bg:#FFFFFF;        /* texto directo sobre el fondo marino */
+  --on-bg-2:#D5DCF2;
+  --card:#F8F9FC;
+  --card-line:#DCE1EE;
+  --field-bg:#FFFFFF;
+  --field-line:#E8072A;  /* borde rojo de los campos del formulario */
+  --hud-bg:#F8F9FC;
+  /* Casillas (como el prototipo original) */
+  --tile-face:#FFFFFF;
+  --tile-edge:var(--brand);
+  --tile-depth:#8F0F13;
+  --tile-empty:#FFFFFF;
+  --tile-empty-line:#CCCCCC;
+  --found-line:var(--ok-line);
+  --win-glow:#3DDC84;
+  --win-title:#FFFFFF;
+  --casi:#2C8A52;          /* contador a una de ganar */
+  --navy:#4C7DFF;          /* azul claro del confeti (se ve sobre el fondo marino) */
+  --coral:#E8706B;         /* coral del confeti */
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;position:relative;min-height:100vh;min-height:100dvh;overflow-x:hidden;background:var(--bg);color:var(--on-bg);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;padding-bottom:env(safe-area-inset-bottom,0px)}
+.H{font-family:Anton,Impact,"Arial Black",system-ui,sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.5px}
+.hide{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+a{color:var(--brand-ink);text-underline-offset:2px}
+
+/* Encabezado */
+.hd{position:relative;background:var(--hd-bg);border-bottom:4px solid var(--hd-line);padding:calc(8px + env(safe-area-inset-top,0px)) 16px 8px;display:flex;justify-content:center}
+.hd img{height:44px;width:auto;display:block}
+/* En Inicio el logo va más grande */
+body.inicio .hd img{height:60px}
+.wrap{position:relative;z-index:1;max-width:460px;margin:0 auto;padding:16px 16px 28px}
+/* Curvas rojas del template: arriba a la izquierda (bajo el encabezado) y abajo a la derecha, en todas las pantallas */
+.hd::after,body::after{content:"";position:absolute;pointer-events:none;background:var(--brand);z-index:0}
+.hd::after{left:0;top:calc(100% + 4px);width:clamp(56px,20vw,110px);aspect-ratio:1/1;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpath d='M0 0H100Q38 18 0 100Z'/%3E%3C/svg%3E") center/100% 100% no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpath d='M0 0H100Q38 18 0 100Z'/%3E%3C/svg%3E") center/100% 100% no-repeat}
+body::after{right:0;bottom:0;width:clamp(110px,40vw,230px);aspect-ratio:1/1;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpath d='M100 0V100H0Q78 88 100 0Z'/%3E%3C/svg%3E") center/100% 100% no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpath d='M100 0V100H0Q78 88 100 0Z'/%3E%3C/svg%3E") center/100% 100% no-repeat}
+
+
+/* Tarjetas y texto */
+.card{background:var(--card);color:var(--ink);border:1px solid var(--card-line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+h1{margin:0;font-size:68px;line-height:.92;text-align:center;color:var(--on-bg);background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 44' fill='none' stroke-linecap='round' stroke-width='4'%3E%3Cpath d='M2 22h15' stroke='%23FFFFFF'/%3E%3Cpath d='M8 4l11 11M8 40l11-11' stroke='%23E8072A'/%3E%3C/svg%3E") left 2px center/30px 34px no-repeat,url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 44' fill='none' stroke-linecap='round' stroke-width='4'%3E%3Cpath d='M38 22H23' stroke='%23FFFFFF'/%3E%3Cpath d='M32 4L21 15M32 40L21 29' stroke='%23E8072A'/%3E%3C/svg%3E") right 2px center/30px 34px no-repeat}
+h1 span{display:block;color:var(--brand-hi)}
+h2{margin:0 0 4px;font-size:26px;line-height:1.05;color:var(--ink)}
+.hero{text-align:center}
+.sub{color:var(--on-bg-2);margin:8px 0 12px;font-size:16px}
+.ilus{display:block;margin:0 auto 12px;width:100%;max-width:220px;height:auto}
+.rules{list-style:none;padding:0;margin:0}
+.rules li{display:flex;gap:12px;align-items:center;padding:7px 0;font-size:14.5px;line-height:1.35}
+.rules li+li{border-top:1px solid var(--line)}
+.rules i{font-style:normal;background:var(--regla-bg);color:var(--regla-ink);width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex:none}
+
+/* Botones */
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:52px;margin-top:14px;padding:12px 16px;border:0;border-radius:999px;background:linear-gradient(180deg,var(--brand-hi),#E30321);box-shadow:0 8px 18px rgba(232,7,42,.35);color:var(--on-brand);font:700 17px/1.2 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;letter-spacing:.3px;cursor:pointer;transition:background-color .15s,transform .1s}
+.btn:hover{background:var(--brand-press)}
+.btn:active{transform:translateY(1px);background:var(--brand-press)}
+.btn:disabled{background:var(--disabled-bg);color:var(--on-disabled);box-shadow:none;cursor:not-allowed;transform:none}
+.btn.sec{background:var(--surface);color:var(--ink);border:2px solid var(--ink);box-shadow:none;min-height:48px;font-size:16px}
+.btn.sec:hover{background:var(--surface-2)}
+.btn.cargando:disabled{background:var(--brand);color:var(--on-brand);box-shadow:none;cursor:progress}
+.btn.cargando::before{content:"";width:18px;height:18px;border-radius:50%;border:2.5px solid currentColor;border-right-color:transparent;animation:gira .8s linear infinite}
+@keyframes gira{to{transform:rotate(1turn)}}
+/* Botón de Inicio: flecha y destellos rojos a los lados, como el template */
+#jugar::after{content:"\2192";font-size:22px;line-height:1}
+.cta{position:relative;margin:18px 0 0;padding:0 30px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 36' fill='none' stroke='%23E8072A' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M4 6l8 7M4 30l8-7M2 18h10'/%3E%3C/svg%3E") left 2px center/22px 34px no-repeat,url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 36' fill='none' stroke='%23E8072A' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M20 6l-8 7M20 30l-8-7M22 18H12'/%3E%3C/svg%3E") right 2px center/22px 34px no-repeat}
+.cta .btn{margin-top:0}
+
+/* Formulario */
+label{display:block;font-size:14px;font-weight:600;color:var(--ink);margin:14px 0 6px}
+input[type=text],input[type=tel],select{width:100%;min-height:48px;padding:11px 12px;border:1.5px solid var(--field-line);border-radius:var(--radius-sm);font:16px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background-color:var(--field-bg);color:var(--ink)}
+select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--ink) 50%),linear-gradient(135deg,var(--ink) 50%,transparent 50%);background-position:calc(100% - 20px) 21px,calc(100% - 15px) 21px;background-size:5px 5px;background-repeat:no-repeat;padding-right:38px}
+input::placeholder{color:var(--placeholder)}
+input:focus,select:focus{outline:3px solid var(--focus);outline-offset:1px;border-color:var(--ink)}
+input[aria-invalid=true]{border-color:var(--err-ink);border-width:2px;background:var(--err-field)}
+.err{display:flex;gap:6px;align-items:flex-start;color:var(--err-ink);font-size:13.5px;line-height:1.35;margin:6px 0 0}
+.err::before{content:"";flex:none;width:16px;height:16px;margin-top:1px;background:currentColor;-webkit-mask:var(--i-alerta) center/contain no-repeat;mask:var(--i-alerta) center/contain no-repeat}
+:root{--i-check:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");--i-alerta:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1 5h2v7h-2zm0 9h2v2h-2z'/%3E%3C/svg%3E");--i-info:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1 5h2v2h-2zm0 4h2v6h-2z'/%3E%3C/svg%3E")}
+.disc{max-height:120px;overflow:auto;border-radius:var(--radius-sm);background:var(--surface-2);padding:10px 12px;font-size:12.5px;color:var(--ink-2);margin-top:16px;line-height:1.5}
+.links{font-size:13.5px;margin:10px 0 0;color:var(--ink-2);line-height:1.7}
+.lnk{background:none;border:0;padding:10px 0;min-height:44px;font:700 15px/1.2 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.lnk:hover{color:var(--brand-ink)}
+.tyc{width:min(640px,calc(100% - 24px));max-height:calc(100dvh - 24px);margin:auto;padding:0;border:0;border-radius:var(--radius);background:var(--card);color:var(--ink);overflow:hidden;box-shadow:var(--shadow)}
+.tyc[open]{display:flex;flex-direction:column}
+.tyc::backdrop{background:rgba(0,0,0,.72)}
+.tyc-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 8px 12px 16px;border-bottom:1px solid var(--line)}
+.tyc-top h2{margin:0;font-size:20px}
+.tyc-x{flex:none;width:44px;height:44px;border:0;border-radius:50%;background:none;color:var(--ink);font-size:28px;line-height:1;cursor:pointer}
+.tyc-x:hover{background:var(--surface-2)}
+.tyc-txt{overflow:auto;padding:14px 16px 20px;font-size:14px;line-height:1.55;color:var(--ink-2)}
+.tyc-txt p{margin:0 0 12px}
+.tyc-txt ul{margin:0 0 12px;padding-left:20px}
+.tyc-txt li{margin-bottom:6px}
+.tyc-txt b{color:var(--ink)}
+.pend{background:var(--err-bg);color:var(--err-ink);border-radius:var(--radius-sm);padding:10px 12px;font-size:13px;margin-top:12px;line-height:1.4}
+.chk{display:flex;gap:12px;align-items:center;font-size:14px;font-weight:400;color:var(--ink);margin-top:14px;min-height:44px;cursor:pointer;line-height:1.4}
+.chk input{flex:none;width:24px;height:24px;margin:0;accent-color:var(--brand);cursor:pointer}
+#er{margin-left:36px}
+.aviso{display:flex;gap:10px;align-items:flex-start;background:var(--surface-2);border-left:4px solid var(--brand);border-radius:var(--radius-sm);padding:11px 12px;margin-top:14px;font-size:14.5px;color:var(--ink);font-weight:700;line-height:1.4}
+.aviso::before{content:"";flex:none;width:20px;height:20px;background:var(--brand);-webkit-mask:var(--i-info) center/contain no-repeat;mask:var(--i-info) center/contain no-repeat}
+.msg{margin-top:12px;padding:11px 12px;border-radius:var(--radius-sm);font-size:14.5px;line-height:1.4;display:flex;gap:8px;align-items:flex-start}
+.msg.e{background:var(--err-bg);color:var(--err-ink);font-weight:600}
+.msg.e::before{content:"";flex:none;width:18px;height:18px;margin-top:1px;background:currentColor;-webkit-mask:var(--i-alerta) center/contain no-repeat;mask:var(--i-alerta) center/contain no-repeat}
+.msg.i{background:var(--surface-2);color:var(--ink)}
+#regmsg .btn,#gamemsg .btn{margin-top:10px}
+
+/* Juego */
+.hud{background:var(--hud-bg);box-shadow:var(--shadow);color:var(--hud-ink);border-radius:var(--radius);padding:12px;margin-bottom:12px}
+.hud-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;font-size:13px;color:var(--hud-ink-2);margin-bottom:10px}
+/* Nombre arriba y droguería debajo, más pequeña; si no caben, bajan de línea en vez de cortarse */
+#who{min-width:0;overflow-wrap:anywhere;line-height:1.3}
+#who b{display:block;font-size:14.5px;font-weight:700;color:var(--hud-ink)}
+#who small{display:block;font-size:12px;color:var(--hud-ink-2);margin-top:1px}
+#left{flex:none;color:var(--hud-ink);font-weight:700;font-size:14px}
+.opp{display:flex;gap:6px;margin-bottom:10px}
+.opp div{flex:1;text-align:center;padding:5px 2px;border-radius:8px;font-size:12px;color:var(--hud-ink-2);border:1.5px solid var(--charcoal-line);white-space:nowrap}
+@media (max-width:350px){.opp div{font-size:11px;padding:5px 1px}}
+.opp div.on{border-color:var(--brand);color:var(--hud-ink);font-weight:700}
+.opp div.past{background:var(--charcoal-past);border-color:var(--charcoal-past);color:var(--on-charcoal-past);text-decoration:line-through}
+.cnt{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.cnt div{background:var(--charcoal-2);border-radius:8px;padding:6px 2px 7px;text-align:center;font-size:12px;font-weight:600;color:var(--hud-ink)}
+.cnt b{display:block;font-size:15px;color:var(--hud-ink);margin-top:1px;letter-spacing:1px}
+.cnt div.casi{box-shadow:inset 0 0 0 2px var(--casi)}
+.board{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+/* Casillas: igual que el prototipo original (blancas, borde rojo, logo; al tocar se encogen y al destapar se voltean) */
+.cell{position:relative;aspect-ratio:1/1;min-width:44px;border:3px solid var(--tile-edge);border-radius:10px;background:var(--tile-face);display:flex;align-items:center;justify-content:center;padding:2px;cursor:pointer;box-shadow:0 3px 0 var(--tile-depth);transition:transform .15s}
+.cell img{width:82%;height:auto;display:block;pointer-events:none}
+.cell:active:not(:disabled){transform:scale(.92)}
+.cell:disabled{cursor:default}
+.board.wait .cell:not(.open){cursor:progress}
+.cell.open{box-shadow:none;cursor:default;animation:voltea .3s}
+.cell.load{animation:pulso .5s infinite alternate;opacity:.7}
+.cell.p{padding:0;background:var(--surface);border-color:var(--line);color:#111111;font:800 clamp(14px,4.2vw,18px)/1.05 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;text-align:center}
+.cell.p img.pi{width:90%;height:auto;max-height:80%;object-fit:contain}
+/* El color del texto debe ser opaco: Chrome pinta el emoji con su transparencia */
+.cell.s,.cell.s:disabled{color:#000000;background:var(--tile-empty);border-color:var(--tile-empty-line);font-size:clamp(36px,11vw,50px);line-height:1;font-family:"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif}
+.cell.l{background:var(--surface);padding:3px}
+.cell.l img{width:100%}
+/* Lo que destapó la persona (producto o logo): borde verde y ✓ */
+.cell.hallado{border-color:var(--found-line)}
+.marca{position:absolute;top:-7px;right:-7px;width:22px;height:22px;border-radius:50%;background:var(--found-line);color:#FFFFFF;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px var(--bg);animation:marca .35s .25s both cubic-bezier(.3,1.6,.5,1)}
+.marca svg{width:14px;height:14px}
+.cell.dim{opacity:.4}
+.cell.dim.p,.cell.dim.l{border-color:var(--tile-empty-line)}
+.cell.win{animation:pulso .6s infinite alternate;border-color:var(--found-line);box-shadow:0 0 14px var(--win-glow)}
+.cell.s.open:not(.dim){animation:voltea .3s,triste .5s .3s}
+@keyframes triste{0%,100%{transform:none}30%{transform:rotate(-8deg)}60%{transform:rotate(6deg)}}
+@keyframes voltea{from{transform:rotateY(90deg)}to{transform:none}}
+@keyframes pulso{to{transform:scale(1.08)}}
+@keyframes marca{from{transform:scale(0)}to{transform:scale(1)}}
+
+/* Resultado */
+.res{position:relative;overflow:hidden;text-align:center;padding:26px 18px;background:var(--res-bg);color:#FFFFFF;border-color:rgba(255,255,255,.14)}
+.burst{position:relative;width:112px;height:112px;margin:0 auto 14px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface-2);color:var(--ink-2)}
+.burst svg{position:relative;width:58%;height:58%}
+.burst:not(.trofeo){font-family:Anton,Impact,"Arial Black",system-ui,sans-serif;font-size:32px;text-transform:uppercase;letter-spacing:1px;color:var(--ink-2)}
+.burst.trofeo{background:var(--res-win);box-shadow:0 0 0 6px var(--res-ring);color:#FFFFFF}
+.res h2{font-size:32px;margin:0 0 8px}
+.win-t{color:#FFFFFF}.lose-t{color:#FFFFFF}
+#rs{color:var(--on-bg-2);margin:0;font-size:15.5px}
+/* Ganó: rayos dorados girando detrás del trofeo, el trofeo entra con rebote y el título crece */
+.gana .res{background:radial-gradient(120% 70% at 50% 0,var(--res-win),var(--res-bg) 60%)}
+.gana .burst::before{content:"";position:absolute;inset:-34px;border-radius:50%;background:repeating-conic-gradient(var(--gold) 0 8deg,transparent 8deg 24deg);-webkit-mask:radial-gradient(circle,transparent 52%,#000 53%,transparent 71%);mask:radial-gradient(circle,transparent 52%,#000 53%,transparent 71%);opacity:.55;animation:rayos 9s linear infinite}
+.gana .burst{animation:entra .7s cubic-bezier(.3,1.6,.5,1) both}
+.gana .res h2{animation:crece .6s .35s both}
+.gana .win-t{color:var(--win-title)}
+/* Perdió: círculo rojo (como la estrella roja del original) que cae, rebota y se sacude; lluvia de 😢 */
+.pierde .burst{background:var(--brand);color:var(--on-brand);box-shadow:0 0 0 6px rgba(229,28,33,.25);animation:cae-uy .6s cubic-bezier(.3,1.5,.5,1) both,sacude .7s .6s}
+.pierde .burst:not(.trofeo){color:var(--on-brand)}
+.pierde .res{background:radial-gradient(120% 70% at 50% 0,var(--res-lose),var(--res-bg) 60%)}
+@keyframes cae-uy{0%{transform:translateY(-60px) scale(.6);opacity:0}100%{transform:none;opacity:1}}
+.pierde .res h2{animation:crece .5s .3s both}
+@keyframes rayos{to{transform:rotate(1turn)}}
+@keyframes entra{0%{transform:scale(.2) rotate(-20deg);opacity:0}100%{transform:none;opacity:1}}
+@keyframes crece{0%{transform:scale(.7);opacity:0}100%{transform:none;opacity:1}}
+@keyframes sacude{0%,100%{transform:none}20%{transform:rotate(-10deg)}40%{transform:rotate(8deg)}60%{transform:rotate(-5deg)}80%{transform:rotate(3deg)}}
+/* Confeti (capa fija encima de todo, no recibe toques) */
+.confeti{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:50}
+.confeti i{position:absolute;top:-24px;width:8px;height:12px;border-radius:2px;animation:cae linear both}
+.confeti i.emoji{width:auto;height:auto;background:none;font:24px/1 "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif;color:#000000}
+.confeti i.cinta{width:5px;height:18px;border-radius:3px}
+.confeti .c1{background:var(--brand)}.confeti .c2{background:var(--navy)}.confeti .c3{background:var(--gold)}.confeti .c4{background:var(--coral)}.confeti .c5{background:var(--ok-line)}
+@keyframes cae{0%{transform:translate(0,0) rotate(0)}100%{transform:translate(var(--deriva),110vh) rotate(var(--giro))}}
+
+/* Pantallas bajas (p. ej. 360×640): el botón de Inicio debe verse sin bajar */
+@media (max-height:760px){
+  .hd{padding-top:calc(6px + env(safe-area-inset-top,0px));padding-bottom:6px}
+  .hd img{height:36px}
+  body.inicio .hd img{height:48px}
+  .wrap{padding-top:10px}
+  #s0 h1{font-size:50px}
+  #s0 .sub{font-size:14px;margin:4px 0 6px;line-height:1.35}
+  #s0 .ilus{max-width:170px;margin-bottom:8px}
+  #s0 .card{padding:10px 14px 14px}
+  .rules li{padding:4px 0;font-size:13.5px;gap:10px}
+  .rules i{width:22px;height:22px;font-size:12px}
+  #s0 .cta{margin-top:12px}
+}
+
+/* Escritorio */
+@media (min-width:768px){
+  .wrap{padding-top:28px}
+  .hd img{height:48px}
+  body.inicio .hd img{height:68px}
+  h1{font-size:76px}
+}
+</style></head><body class="inicio">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-trofeo" viewBox="0 0 64 64"><path d="M18 8h28v14c0 9-6 16-14 16s-14-7-14-16z" style="fill:var(--gold)" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><path d="M18 13H9c0 9 4 14 11 15M46 13h9c0 9-4 14-11 15" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M28 38h8v8h-8z" style="fill:var(--gold)" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><path d="M20 46h24v8H20z" style="fill:var(--charcoal)" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><path d="M27 16l2.2 4.4 4.8.7-3.5 3.4.8 4.8-4.3-2.3-4.3 2.3.8-4.8-3.5-3.4 4.8-.7z" transform="translate(5 -1)" style="fill:var(--surface)"/></symbol>
+</svg>
+<header class="hd"><picture><source srcset="assets/img/hetero.webp" type="image/webp"><img alt="Hetero" src="assets/img/hetero.png" width="48" height="40"></picture></header>
+<main class="wrap">
+
+<section id="s0">
+<div class="hero">
+<h1 class="H">Click <span>Friday</span></h1>
+<p class="sub">¡Solo para droguistas! Encuentra tu producto ganador.</p>
+</div>
+<svg class="ilus" viewBox="0 0 320 236" width="220" height="162" role="img" aria-label="Droguería con droguista">
+<rect x="12" y="8" width="296" height="220" rx="44" style="fill:var(--il-marco)"/>
+<rect x="40" y="36" width="240" height="184" rx="34" style="fill:var(--surface)"/>
+<rect x="66" y="12" width="188" height="42" rx="21" style="fill:var(--brand)"/>
+<path d="M88 25v18M79 34h18M232 25v18M223 34h18" style="stroke:var(--surface)" stroke-width="5" stroke-linecap="round"/>
+<text x="160" y="42" text-anchor="middle" font-family="Anton,Impact,Arial Black,sans-serif" font-size="23" letter-spacing="2" style="fill:var(--surface)">DROGUERÍA</text>
+<path d="M40 56h30v14a15 15 0 0 1-30 0z" style="fill:var(--brand)"/><path d="M70 56h30v14a15 15 0 0 1-30 0z" stroke-width="1.5" style="fill:var(--bg);stroke:var(--line)"/><path d="M100 56h30v14a15 15 0 0 1-30 0z" style="fill:var(--brand)"/><path d="M130 56h30v14a15 15 0 0 1-30 0z" stroke-width="1.5" style="fill:var(--bg);stroke:var(--line)"/><path d="M160 56h30v14a15 15 0 0 1-30 0z" style="fill:var(--brand)"/><path d="M190 56h30v14a15 15 0 0 1-30 0z" stroke-width="1.5" style="fill:var(--bg);stroke:var(--line)"/><path d="M220 56h30v14a15 15 0 0 1-30 0z" style="fill:var(--brand)"/><path d="M250 56h30v14a15 15 0 0 1-30 0z" stroke-width="1.5" style="fill:var(--bg);stroke:var(--line)"/>
+<path d="M60 206V124A100 34 0 0 1 260 124V206z" style="fill:var(--charcoal)"/>
+<rect x="62" y="140" width="196" height="4" rx="2" style="fill:var(--on-charcoal-2)"/><rect x="62" y="178" width="196" height="4" rx="2" style="fill:var(--on-charcoal-2)"/>
+<rect x="74" y="114" width="14" height="26" rx="6" style="fill:var(--gold)"/><rect x="92" y="118" width="14" height="22" rx="6" style="fill:var(--brand)"/><rect x="110" y="122" width="14" height="18" rx="6" style="fill:var(--on-charcoal)"/><rect x="204" y="114" width="14" height="26" rx="6" style="fill:var(--on-charcoal-2)"/><rect x="222" y="118" width="14" height="22" rx="6" style="fill:var(--gold)"/><rect x="240" y="122" width="14" height="18" rx="6" style="fill:var(--brand)"/><rect x="74" y="152" width="14" height="26" rx="6" style="fill:var(--gold)"/><rect x="92" y="156" width="14" height="22" rx="6" style="fill:var(--brand)"/><rect x="110" y="160" width="14" height="18" rx="6" style="fill:var(--on-charcoal)"/><rect x="204" y="152" width="14" height="26" rx="6" style="fill:var(--on-charcoal-2)"/><rect x="222" y="156" width="14" height="22" rx="6" style="fill:var(--gold)"/><rect x="240" y="160" width="14" height="18" rx="6" style="fill:var(--brand)"/>
+<path d="M128 194Q130 156 160 150Q190 156 192 194Z" style="fill:var(--surface)"/>
+<path d="M150 151L160 170L170 151Z" style="fill:var(--brand)"/>
+<rect x="152" y="136" width="16" height="14" rx="6" style="fill:var(--il-cuello)"/>
+<ellipse cx="160" cy="124" rx="17" ry="20" style="fill:var(--il-piel)"/>
+<path d="M142 120Q141 100 160 100Q179 100 178 120Q172 108 160 108Q148 108 142 120Z" style="fill:var(--il-pelo)"/>
+<circle cx="153" cy="125" r="5.5" fill="none" style="stroke:var(--il-trazo)" stroke-width="1.8"/><circle cx="167" cy="125" r="5.5" fill="none" style="stroke:var(--il-trazo)" stroke-width="1.8"/><path d="M158.5 125h3" style="stroke:var(--il-trazo)" stroke-width="1.8"/>
+<circle cx="153" cy="125" r="1.8" style="fill:var(--il-trazo)"/><circle cx="167" cy="125" r="1.8" style="fill:var(--il-trazo)"/>
+<path d="M152 135Q160 143 168 135" style="stroke:var(--il-boca)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+<path d="M186 176L210 148" style="stroke:var(--surface)" stroke-width="11" stroke-linecap="round"/><circle cx="212" cy="144" r="7" style="fill:var(--il-piel)"/>
+<path d="M136 174h10M141 169v10" style="stroke:var(--brand)" stroke-width="3.5" stroke-linecap="round"/>
+<rect x="40" y="190" width="240" height="14" rx="7" style="fill:var(--surface);stroke:var(--line)"/><rect x="40" y="204" width="240" height="16" rx="8" style="fill:var(--brand)"/>
+</svg>
+<div class="card"><ul class="rules">
+<li><i>1</i>Regístrate y acepta los términos y el tratamiento de datos.</li>
+<li><i>2</i>Tienes 3 oportunidades: hasta 12 clics en total.</li>
+<li><i>3</i>Descubre casillas en el tablero de 4 × 6.</li>
+<li><i>4</i>Encuentra 3 veces el mismo producto, o el logo Hetero, y ¡ganas!</li></ul>
+<div class="cta"><button type="button" class="btn" id="jugar">Quiero jugar</button></div></div>
+</section>
+
+<section id="s1" class="hide">
+<form class="card" id="form" novalidate>
+<h2 class="H">Tus datos</h2>
+<label for="n">Nombre completo</label><input type="text" id="n" name="nombre" autocomplete="name" maxlength="80" aria-describedby="n-er" required><p class="err hide" id="n-er"></p>
+<label for="d">Nombre de la droguería</label><input type="text" id="d" name="drogueria" autocomplete="organization" maxlength="100" aria-describedby="d-er" required><p class="err hide" id="d-er"></p>
+<label for="t">Teléfono</label><input type="tel" id="t" name="telefono" autocomplete="tel" inputmode="tel" maxlength="20" placeholder="Celular de 10 dígitos" aria-describedby="t-er" required><p class="err hide" id="t-er"></p>
+<label for="rep">Representante Hetero</label><select id="rep" name="representante" required><option value="">Selecciona tu representante Hetero</option><option>Adriana María Benitez Neme</option><option>Alba Lucia Zapata Arias</option><option>Amparo Ferrer</option><option>Ana Milena Narváez Fuentes</option><option>Angelica Mendoza</option><option>Angelica Vega</option><option>Angie Peña</option><option>Anny Roa Jiménez</option><option>Carolina Rueda</option><option>Damaris Rincón</option><option>Erika Gallego Figueroa</option><option>Ingrid Johana Herazo</option><option>Johandy Bonansea Hernandez</option><option>Julia Karelis Parra González</option><option>Karen Cruz</option><option>Laura Isabel Mena Nagle</option><option>Luz Castellanos</option><option>Maria Aldana</option><option>Natali Giraldo</option><option>Rosmary Cespedes Torrecilla</option><option>Tatiana Giraldo Bernal</option><option>Viviana Arboleda</option><option>Yadira Calderon</option></select>
+<div class="disc" id="legal" tabindex="0" aria-label="Autorización de tratamiento de datos personales">Autorizo de manera previa, expresa e informada a SEVEN PHARMA COLOMBIA S.A.S., como responsable del tratamiento, para recolectar, almacenar, usar, actualizar y tratar mis datos personales (nombre, teléfono, nombre de la droguería, representante Hetero seleccionado y demás información suministrada), con la finalidad de gestionar mi participación en esta actividad, contactarme y enviarme información institucional, educativa, comercial, promocional y publicitaria relacionada con sus productos, servicios, campañas y eventos, a través de correo electrónico, llamadas, SMS, WhatsApp u otros medios autorizados. Declaro conocer que mis datos serán tratados conforme a la Ley 1581 de 2012 y que podré ejercer mis derechos de consulta, actualización, rectificación, supresión y revocatoria de la autorización a través de los canales dispuestos por la compañía y su Política de Tratamiento de Datos Personales.</div>
+<p class="links hide" id="links"></p>
+<p class="links"><button type="button" class="lnk" id="tyc-abrir" aria-haspopup="dialog">Términos y Condiciones</button></p>
+<label class="chk" for="ok"><input type="checkbox" id="ok" name="acepta" aria-describedby="er"><span>Acepto los términos y condiciones y autorizo el tratamiento de mis datos personales.</span></label><p class="err" id="er">Debes aceptar los términos y condiciones y el tratamiento de tus datos personales para poder jugar.</p>
+<p class="aviso" id="aviso">Tienes una sola participación; no cierres la página hasta terminar.</p>
+<button type="submit" class="btn" id="go" disabled>Empezar a jugar</button>
+<div id="regmsg" role="alert" aria-live="assertive"></div>
+</form></section>
+
+<section id="s2" class="hide">
+<div class="hud">
+<div class="hud-top"><span id="who"><b id="who-n"></b><small id="who-d"></small></span><span id="left"></span></div>
+<div class="opp" id="opp" aria-hidden="true"></div><div class="cnt" id="cnt" aria-live="polite"></div>
+</div>
+<div class="board" id="b" role="grid" aria-label="Tablero de 4 columnas por 6 filas"></div>
+<div id="gamemsg" role="alert" aria-live="assertive"></div>
+</section>
+
+<section id="s3" class="hide">
+<div class="card res" role="status" aria-live="polite">
+<div class="burst" id="bu" aria-hidden="true"></div><h2 class="H" id="rt"></h2><p id="rs"></p>
+</div></section>
+<noscript><p class="msg e">Para jugar debes activar JavaScript en tu navegador.</p></noscript>
+</main>
+<dialog class="tyc" id="tyc" aria-labelledby="tyc-t">
+<div class="tyc-top"><h2 class="H" id="tyc-t">Términos y Condiciones</h2><button type="button" class="tyc-x" id="tyc-cerrar" aria-label="Cerrar">&times;</button></div>
+<div class="tyc-txt" tabindex="0">
+<p><b>1. Organizador.</b> La actividad «Click Friday» (en adelante, la «Actividad») es organizada por SEVEN PHARMA COLOMBIA S.A.S., bajo la marca Hetero (en adelante, el «Organizador»).</p>
+<p><b>2. Naturaleza de la Actividad.</b> La Actividad es un juego de carácter exclusivamente lúdico, de entretenimiento y de recordación de marca. No constituye una venta, oferta comercial, sorteo, rifa ni apuesta, y participar no obliga a comprar ningún producto ni servicio.</p>
+<p><b>3. Vigencia.</b> La Actividad estará vigente desde el 17 de noviembre de 2026 hasta el 26 de noviembre de 2026, ambas fechas inclusive, en horario colombiano. Fuera de este periodo no se podrá participar. El Organizador podrá suspender, modificar, ampliar o cancelar la Actividad en cualquier momento por razones técnicas, operativas o de fuerza mayor, informándolo por los mismos medios en que se divulgó.</p>
+<p><b>4. Quiénes pueden participar.</b> Pueden participar personas mayores de 18 años que trabajen en droguerías o establecimientos farmacéuticos en Colombia y que sean visitadas por una representante de ventas de Hetero. No pueden participar empleados del Organizador ni sus familiares hasta segundo grado de consanguinidad, afinidad o primero civil.</p>
+<p><b>5. Mecánica del juego.</b></p>
+<ul>
+<li>El participante se registra con su nombre, el nombre de su droguería, su teléfono y selecciona a su representante Hetero.</li>
+<li>Es obligatorio aceptar estos términos y la autorización de tratamiento de datos personales para jugar.</li>
+<li>El tablero tiene 24 casillas con productos Hetero, el logo Hetero y símbolos sin premio, distribuidos de forma aleatoria en cada partida.</li>
+<li>El participante tiene 3 oportunidades, con un máximo de 12 clics en total.</li>
+<li>Acierta quien descubra 3 veces el mismo producto o 3 veces el logo Hetero dentro de esos 12 clics.</li>
+</ul>
+<p><b>6. Una participación por persona.</b> Cada persona puede participar una sola vez durante toda la vigencia. Se identifica por su número de teléfono. Si se detectan participaciones repetidas, datos falsos o uso de varios registros por la misma persona, el Organizador podrá anular las participaciones adicionales y descalificar al participante.</p>
+<p><b>7. Incentivo.</b> Los participantes que acierten podrán recibir un incentivo. El Organizador se reserva el derecho de definir libremente el tipo, la naturaleza, la cantidad y el valor del incentivo, así como el momento y la forma de entrega, y podrá sustituirlo por otro de características similares. El incentivo no es negociable, no es canjeable por dinero ni transferible.</p>
+<p><b>8. Alcance de la responsabilidad.</b> Al ser una actividad de entretenimiento y recordación de marca, la participación o el acierto en el juego no genera por sí solo un derecho exigible a recibir un producto, premio o beneficio, ni una obligación de entrega a cargo del Organizador. La entrega de cualquier incentivo depende de la decisión del Organizador. El Organizador no se hace responsable por fallas de conexión a internet, interrupciones del servicio, errores de dispositivos o de terceros ni por cualquier circunstancia ajena a su control que impida jugar o completar el registro.</p>
+<p><b>9. Uso adecuado.</b> Queda prohibido manipular el juego, usar programas automatizados, suplantar la identidad de otra persona o suministrar información falsa. El Organizador podrá excluir de la Actividad a quien incumpla estas reglas.</p>
+<p><b>10. Tratamiento de datos personales.</b> Los datos personales se tratarán conforme a la autorización aceptada en el registro, a la Ley 1581 de 2012 y a la Política de Tratamiento de Datos Personales de SEVEN PHARMA COLOMBIA S.A.S. Los titulares pueden ejercer sus derechos de consulta, actualización, rectificación, supresión y revocatoria de la autorización a través de los canales dispuestos por la compañía: ruth.gomez@sevenpharma.net</p>
+<p><b>11. Uso de imagen.</b> Los resultados de la Actividad podrán divulgarse únicamente con el nombre del participante y su droguería, y solo si el participante lo autoriza de forma previa y expresa.</p>
+<p><b>12. Aceptación y cambios.</b> Participar implica aceptar estos términos y condiciones. El Organizador podrá modificarlos en cualquier momento, y los cambios aplicarán desde su publicación en el sitio de la Actividad.</p>
+<p><b>13. Ley aplicable.</b> Estos términos se rigen por las leyes de la República de Colombia.</p>
+</div>
+</dialog>
+
+<script src="config.js" defer></script>
+<script src="app.js" defer></script>
+</body></html>
