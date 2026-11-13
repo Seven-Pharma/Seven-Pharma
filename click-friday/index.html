@@ -201,7 +201,7 @@ input[aria-invalid=true]{border-color:var(--err-ink);border-width:2px;background
 @media (max-width:350px){.opp div{font-size:11px;padding:5px 1px}}
 .opp div.on{border-color:var(--brand);color:var(--hud-ink);font-weight:700}
 .opp div.past{background:var(--charcoal-past);border-color:var(--charcoal-past);color:var(--on-charcoal-past);text-decoration:line-through}
-.cnt{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.cnt{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .cnt div{background:var(--charcoal-2);border-radius:8px;padding:6px 2px 7px;text-align:center;font-size:12px;font-weight:600;color:var(--hud-ink)}
 .cnt b{display:block;font-size:15px;color:var(--hud-ink);margin-top:1px;letter-spacing:1px}
 .cnt div.casi{box-shadow:inset 0 0 0 2px var(--casi)}
@@ -218,9 +218,11 @@ input[aria-invalid=true]{border-color:var(--err-ink);border-width:2px;background
 .cell.p img.pi{width:90%;height:auto;max-height:80%;object-fit:contain}
 /* El color del texto debe ser opaco: Chrome pinta el emoji con su transparencia */
 .cell.s,.cell.s:disabled{color:#000000;background:var(--tile-empty);border-color:var(--tile-empty-line);font-size:clamp(36px,11vw,50px);line-height:1;font-family:"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif}
-.cell.l{background:var(--surface);padding:3px}
+/* Logo destapado (13-nov: ya no da premio): fondo y borde grises de las casillas sin premio,
+   plano y sin ✓, para que se distinga de las tapadas (blancas, borde rojo, relieve) */
+.cell.l,.cell.l:disabled{background:var(--tile-empty);border-color:var(--tile-empty-line);padding:3px}
 .cell.l img{width:100%}
-/* Lo que destapó la persona (producto o logo): borde verde y ✓ */
+/* Lo que destapó la persona (solo productos): borde verde y ✓ */
 .cell.hallado{border-color:var(--found-line)}
 .marca{position:absolute;top:-7px;right:-7px;width:22px;height:22px;border-radius:50%;background:var(--found-line);color:#FFFFFF;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px var(--bg);animation:marca .35s .25s both cubic-bezier(.3,1.6,.5,1)}
 .marca svg{width:14px;height:14px}
@@ -327,7 +329,7 @@ input[aria-invalid=true]{border-color:var(--err-ink);border-width:2px;background
 <li><i>1</i>Regístrate y acepta los términos y el tratamiento de datos.</li>
 <li><i>2</i>Tienes 3 oportunidades: hasta 12 clics en total.</li>
 <li><i>3</i>Descubre casillas en el tablero de 4 × 6.</li>
-<li><i>4</i>Encuentra 3 veces el mismo producto, o el logo Hetero, y ¡ganas!</li></ul>
+<li><i>4</i>Encuentra 3 veces el mismo producto (Tadet, Neubalin o Valatril) y ¡ganas! El logo Hetero no suma.</li></ul>
 <div class="cta"><button type="button" class="btn" id="jugar">Quiero jugar</button></div></div>
 </section>
 
@@ -375,7 +377,7 @@ input[aria-invalid=true]{border-color:var(--err-ink);border-width:2px;background
 <li>Es obligatorio aceptar estos términos y la autorización de tratamiento de datos personales para jugar.</li>
 <li>El tablero tiene 24 casillas con productos Hetero, el logo Hetero y símbolos sin premio, distribuidos de forma aleatoria en cada partida.</li>
 <li>El participante tiene 3 oportunidades, con un máximo de 12 clics en total.</li>
-<li>Acierta quien descubra 3 veces el mismo producto o 3 veces el logo Hetero dentro de esos 12 clics.</li>
+<li>Acierta quien descubra 3 veces el mismo producto dentro de esos 12 clics. El logo Hetero no cuenta como acierto.</li>
 </ul>
 <p><b>6. Una participación por persona.</b> Cada persona puede participar una sola vez durante toda la vigencia. Se identifica por su número de teléfono. Si se detectan participaciones repetidas, datos falsos o uso de varios registros por la misma persona, el Organizador podrá anular las participaciones adicionales y descalificar al participante.</p>
 <p><b>7. Incentivo.</b> Los participantes que acierten podrán recibir un incentivo. El Organizador se reserva el derecho de definir libremente el tipo, la naturaleza, la cantidad y el valor del incentivo, así como el momento y la forma de entrega, y podrá sustituirlo por otro de características similares. El incentivo no es negociable, no es canjeable por dinero ni transferible.</p>

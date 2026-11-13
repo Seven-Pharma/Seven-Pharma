@@ -5,7 +5,8 @@
   "use strict";
   var CFG = window.CF_CONFIG || {};
   var CLICS = 12, POR_OPORTUNIDAD = 4, CASILLAS = 24;
-  var ELEMENTOS = ["Tadet", "Neubalin", "Valatril", "Logo Hetero"];
+  // Solo los productos dan premio; el logo Hetero sale en el tablero pero no suma (13-nov).
+  var ELEMENTOS = ["Tadet", "Neubalin", "Valatril"];
   // Imágenes: WebP y, si el navegador no lo muestra, JPG/PNG de respaldo.
   var IMG = { Tadet: "assets/img/tadet.webp", Neubalin: "assets/img/neubalin.webp", Valatril: "assets/img/valatril.webp" };
   var IMG_RESPALDO = { Tadet: "assets/img/tadet.jpg", Neubalin: "assets/img/neubalin.jpg", Valatril: "assets/img/valatril.jpg" };
@@ -251,16 +252,16 @@
     ELEMENTOS.forEach(function (x) { cuenta[x] = 0; });
     Object.keys(abiertas).forEach(function (k) { if (cuenta[abiertas[k]] !== undefined) cuenta[abiertas[k]]++; });
     $("cnt").innerHTML = ELEMENTOS.map(function (x) {
-      return '<div' + (cuenta[x] === 2 ? ' class="casi"' : "") + ">" + (x === "Logo Hetero" ? "Hetero" : x) + "<b>" + cuenta[x] + " / 3</b></div>";
+      return '<div' + (cuenta[x] === 2 ? ' class="casi"' : "") + ">" + x + "<b>" + cuenta[x] + " / 3</b></div>";
     }).join("");
   }
 
   function pintar(pos, elem, atenuar) {
     var e = $("b").children[pos];
     var t = elem === "vacio" ? "s" : elem === "Logo Hetero" ? "l" : "p";
-    // Lo que destapó la persona (producto o logo) lleva borde verde y ✓; lo que se
-    // muestra al final (atenuado) no, porque la ✓ significa «lo encontraste».
-    var hallado = t !== "s" && !atenuar;
+    // Lo que destapó la persona lleva borde verde y ✓ solo si es un producto (lo único que
+    // da premio); lo que se muestra al final (atenuado) no, porque la ✓ significa «lo encontraste».
+    var hallado = t === "p" && !atenuar;
     e.className = "cell open " + t + (atenuar ? " dim" : "") + (hallado ? " hallado" : "");
     e.disabled = true;
     if (t === "p") {
@@ -277,7 +278,7 @@
     } else if (t === "s") {
       e.textContent = "😢";
     } else {
-      e.innerHTML = imgLogo("Logo Hetero") + (hallado ? marca() : "");
+      e.innerHTML = imgLogo("Logo Hetero");
     }
     e.setAttribute("aria-label", "Casilla " + (pos + 1) + ": " + (elem === "vacio" ? "vacía" : elem));
   }
@@ -350,7 +351,7 @@
     $("rt").textContent = gano ? "¡BIEN HECHO ACERTASTE!" : "Casi lo logras";
     $("rt").className = "H " + (gano ? "win-t" : "lose-t");
     $("rs").textContent = gano
-      ? (prod === "Logo Hetero" ? "Encontraste el logo Hetero 3 veces." : "Encontraste " + prod + " 3 veces.") + " Un asesor de Hetero te contactará."
+      ? "Encontraste " + prod + " 3 veces. Un asesor de Hetero te contactará."
       : "Se acabaron tus 12 clics. ¡Gracias por participar!";
     go(3);
     if (gano) confeti(); else lluvia();
